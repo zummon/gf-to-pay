@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.4/dist/cdn.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<script type="text/javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <title>Document</title>
+</head>
+
+<body>
+  <div x-data="function(){
+		return {
+			upload: function (e) {
+				const file = e.currentTarget.files[0];
+				file.arrayBuffer().then(function (raw) {
+					const spreadsheet = XLSX.read(raw, { cellDates: true });
+					const sheetName = spreadsheet.SheetNames[0];
+					const worksheet = spreadsheet.Sheets[sheetName];
+					this.aoa = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+				});
+			},
+			aoa: [[]],
+		}
+	}" class="" style="">
+
+		<div class="p-4 flex flex-wrap gap-4 print:hidden select-none">
+			<div class="">
+				<label>
+					Upload file.xlsx
+					<input
+						type="file"
+						class="cursor-pointer text-cyan-500"
+						accept="xlsx"
+						onchange="function (e) {
+							upload(e);
+						}"
+					/>
+				</label>
+			</div>
+		</div>
+
+		<div class="">
+
+		</div>
+    
+  </div>
+</body>
+
+</html>
