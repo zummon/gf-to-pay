@@ -1,0 +1,9 @@
+{
+  "main": "index.html",
+  "scripts": {
+    "start": ""
+  },
+  "license": "MIT",
+  "dependencies": {
+  }
+}
