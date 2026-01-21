@@ -2,30 +2,25 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.4/dist/cdn.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.4/dist/cdn.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 	<script type="text/javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <title>Document</title>
-	<script>
-
-	</script>
+	<title>Document</title>
 </head>
 
 <body>
-  <div x-data="{
+	<div x-data="{
 		aoa: [[]],
-		test: [],
-		upload (e) {
+		async upload (e) {
 			const file = e.currentTarget.files[0]
-			file.arrayBuffer().then( function (raw) {
+			await file.arrayBuffer().then( function (raw) {
 				const spreadsheet = XLSX.read(raw, { cellDates: true })
 				const sheetName = spreadsheet.SheetNames[0]
 				const worksheet = spreadsheet.Sheets[sheetName]
 				const rest = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
 				let result = []
-				this.aoa = [[]]
 				rest.forEach( function (cols) {
 					if (cols[3]) {
 						result.push([
@@ -43,30 +38,19 @@
 					}
 				})
 				this.aoa = result
-			})
-			this.test = sheetName
+			}.bind(this))
 		},
 
-	}" class="" style="">
+	}">
 
 		<div class="p-4 flex flex-wrap gap-4 print:hidden select-none">
 			<div class="">
 				<label class="cursor-pointer">
 					Upload file.xlsx
-					<input
-						type="file"
-						class="cursor-pointer text-cyan-500"
-						accept="xlsx"
-						@change="function (e) {
-							upload(e)
-						}"
-					/>
+					<input type="file" class="cursor-pointer text-cyan-500" accept=".xlsx" @change="upload($event)" />
 				</label>
 			</div>
 		</div>
-
-		<pre x-text="JSON.stringify(test)"></pre>
-		<pre x-text="JSON.stringify(aoa)"></pre>
 
 		<div class="">
 			<table>
@@ -74,15 +58,15 @@
 					<template x-for="cols in aoa">
 						<tr>
 							<template x-for="value in cols">
-								<td class="border px-1 border" x-text="value"></td>
+								<td class="border px-1" x-text="value"></td>
 							</template>
 						</tr>
 					</template>
 				</tbody>
 			</table>
 		</div>
-    
-  </div>
+
+	</div>
 </body>
 
 </html>
