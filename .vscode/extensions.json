@@ -1,6 +1,5 @@
 {
 	"recommendations": [
-		"ritwickdey.LiveServer",
-		"devdojo.alpinejs-syntax-highlight"
+		"svelte.svelte-vscode"
 	]
 }
