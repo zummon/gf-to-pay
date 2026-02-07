@@ -65,6 +65,14 @@
 			aoa = result;
 		});
 	}
+	function saveLink () {
+		const searchParams = new URLSearchParams();
+		Object.entries(user).forEach(([key, value]) => {
+			searchParams.set(key, value);
+		});
+		let useUrl = 'https://codepen.io/zummon/full/raLMwwK?' + searchParams.toString()
+		navigator.clipboard.writeText(useUrl);
+	}
 
 	let aoa = $state([
 		[],
@@ -83,7 +91,16 @@
 		[],
 		[],
 	]);
-	let user = $state({doc:'ขบ 02', placeCode: '', costCode: '', phone: '', sender: '', approver: ''})
+	let user = $state({
+		doc: "",
+		placeCode: "",
+		costCode: "",
+		phone: "",
+		sender: "",
+		approver: "",
+		senderPos: "",
+		approverPos: "",
+	});
 
 	let calculate = $derived.by(() => {
 		let total = [0, 0, 0, 0];
@@ -96,7 +113,15 @@
 		return { total };
 	});
 
-	onMount(() => {});
+	onMount(() => {
+		const searchParams = new URLSearchParams(location.search);
+		Object.entries(user).forEach(([key, value]) => {
+			let useValue = searchParams.get(key);
+			if (useValue) {
+				user[key] = useValue;
+			}
+		});
+	});
 </script>
 
 <div class="p-4 flex flex-wrap gap-4 print:hidden select-none">
@@ -105,7 +130,7 @@
 			Upload Excel file.xlsx รายงานสรุปรายการเบิกจ่ายของหน่วยงาน (เงินงบ) รายวัน
 			<input
 				type="file"
-				class="cursor-pointer text-cyan-500"
+				class="cursor-pointer text-cyan-600"
 				accept=".xlsx"
 				onchange={(e) => {
 					upload(e);
@@ -115,12 +140,22 @@
 	</div>
 	<div class="">
 		<button
-			class="cursor-pointer text-cyan-500"
+			class="cursor-pointer text-cyan-600"
 			onclick={() => {
 				print();
 			}}
 		>
 			Print
+		</button>
+	</div>
+	<div class="">
+		<button
+			class="cursor-pointer text-cyan-600"
+			onclick={() => {
+				saveLink()
+			}}
+		>
+			Copy Link
 		</button>
 	</div>
 </div>
@@ -130,7 +165,7 @@
 		<thead>
 			<tr>
 				<td class="text-center" colspan="99">
-					ใบขออนุมัติหรือยกเลิกการเบิกเงิน (<span></span>)
+					ใบขออนุมัติหรือยกเลิกการเบิกเงิน (<input class="field-sizing-content" bind:value={user.doc}>)
 				</td>
 			</tr>
 			<tr>
@@ -138,11 +173,11 @@
 					ชื่อหน่วยงาน
 					<span>{aoa[0][4]}</span>
 					รหัสกรม
-					<span></span>
+					<input class="field-sizing-content" bind:value={user.placeCode}>
 					รหัสศูนย์ต้นทุน
-					<span></span>
+					<input class="field-sizing-content" bind:value={user.costCode}>
 					โทรศัพท์
-					<span></span>
+					<input class="field-sizing-content" bind:value={user.phone}>
 				</td>
 			</tr>
 			<tr>
@@ -273,13 +308,40 @@
 				<td class="border-t"></td>
 			</tr>
 			<tr>
-				<td class="" colspan="99"
+				<td class="text-center" colspan="2"
 					>รวม <span class="">{aoa.length}</span> ฉบับ</td
 				>
+				<td colspan="9"></td>
 			</tr>
 			<tr>
-				<td class="" colspan="99">ลงชื่อ</td>
+				<td colspan="3"></td>
+				<td class="text-center" colspan="8">ลงชื่อ.....................................(ผู้นำส่งข้อมูล)</td>
 			</tr>
+			<tr>
+				<td colspan="3"></td>
+				<td class="text-center" colspan="8">({user.sender})</td>
+			</tr>
+			<tr>
+				<td colspan="3"></td>
+				<td class="text-center" colspan="8">{user.senderPos}</td>
+			</tr>
+			<tr>
+				<td colspan="3"></td>
+				<td class="text-center" colspan="8">ลงชื่อ.....................................(ผู้เบิกหรือผู้แทน)</td>
+			</tr>
+			<tr>
+				<td colspan="3"></td>
+				<td class="text-center" colspan="8">({user.approver})</td>
+			</tr>
+			<tr>
+				<td colspan="3"></td>
+				<td class="text-center" colspan="8">{user.approverPos}</td>
+			</tr>
+
+			
+
+
+
 		</tbody>
 	</table>
 </div>
